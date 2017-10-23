@@ -12,7 +12,7 @@
   border-radius: 2px;
 
   display:grid;
-  grid-template-columns: 100px 100px 1fr;
+  grid-template-columns: minmax(max-content, 100px) 100px 1fr;
 
 }
 .generator label{
@@ -79,7 +79,7 @@
     margin:20px;
     border-radius: 2px;
     display:grid;
-    grid-template-columns:100px auto;
+    grid-template-columns:40% auto;
   }
   .generator .description{
     grid-column: 1/3;
@@ -99,7 +99,7 @@
     margin:20px;
     border-radius: 2px;
     display:grid;
-    grid-template-columns:100px 100px 1fr 100px 100px 1fr;
+    grid-template-columns:minmax(max-content, 100px) 100px 1fr minmax(max-content, 100px) 100px 1fr;
   }
 
   .dark-theme .generator .variable:nth-child(odd),
@@ -116,6 +116,4 @@
    .generator label:nth-child(even){
     padding-left:20px;
   }
-
-
 }
