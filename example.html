@@ -11,33 +11,33 @@ body{
 }
   </style>
   <script>
-  var gen=new Generator("#generator");
-  gen.autosaveVariables();
-  gen.autorun();
-  gen.defineVariables([
-  {
-    type:"number", label:"width",
-    min:0,max:10,
-    description:"width descri asd asdasd asd asda sdasd asdasd asd asd asd asd asd ption"
-  },{
-    type:"number", label:"height",
-    min:0,max:10,
-    description:"height descript asd asd asd asdasdas dasd asd ion"
-  },{
-    type:"select", label:"choose",
-    options:["aap","noot","mies"],
-    description:"sele asdas dsa asd asdwer wrt egfhcghryu tyu 76i jhnmnhgjgtyutu rury eyfgvbnv nn b fdgh fghct"
-  },{
-    type:"select", label:"choose2",
-    options:["aap","noot","mies"],
-    description:"sele asdas dsa asd asdwer wrt egfhcghryu tyu 76i jhnmnhgjgtyutu rury eyfgvbnv nn b fdgh fghct"
-  }
-]);
+  var gen=new Generator("#generator",{
+    variables:[
+    {
+      type:"number", label:"width",
+      min:1,max:10,step:0.5,
+      description:"width descri asd asdasd asd asda sdasd asdasd asd asd asd asd asd ption"
+    },{
+      type:"number", label:"height",
+      min:1,max:10,
+      description:"height descript asd asd asd asdasdas dasd asd ion"
+    },{
+      type:"select", label:"choose",
+      options:["aap","noot","mies"],
+      description:"sele asdas dsa asd asdwer wrt egfhcghryu tyu 76i jhnmnhgjgtyutu rury eyfgvbnv nn b fdgh fghct"
+    },{
+      type:"select", label:"choose2",
+      options:["aap","noot","mies"],
+      description:"sele asdas dsa asd asdwer wrt egfhcghryu tyu 76i jhnmnhgjgtyutu rury eyfgvbnv nn b fdgh fghct"
+    },{
+      type:"checkbox",label:"enable this",defaultValue:true,
+      description:"check this to enable something"
+    }],
+    autorun:true,autosave:true
+  });
 
-  gen.process=function(width,height,select){
-    //add code here to excually generate the file or text;
-    // return a URL for a file result or a string for text result
-    return width+","+height+","+(width*height)+","+["aap","noot","mies"][select];
+  gen.process=function(width,height,select,select2,check){
+    return width+","+height+","+(width*height)+","+["aap","noot","mies"][select]+","+check;
   };
 
   </script>
