@@ -4,15 +4,16 @@ function JMCreateID(){
   return 'jm_'+jm_identifier_counter++;
 }
 
-function Generator(query){
+function Generator(query,options){
   this.target=query;
   this.index=Generator.all.length;
   Generator.all.push(this);
   this.interface=document.createElement('DIV');
   this.interface.id='generator_'+this.index;
   this.interface.classList.add('generator');
-  this.autosaveVars=false;
-
+  this.autosaveVars=options.autosave?true:false;
+  this.autorun=options.autorun?true:false;
+  if(this.autorun) this.interface.classList.add('autorun');
   this.runButton=document.createElement('input');
   this.runButton.setAttribute('type','button');
   this.runButton.value="RUN!";
@@ -32,6 +33,30 @@ function Generator(query){
   this.interface.appendChild(this.resultFile);
 
   this.variables=[];
+  var list =options.variables;
+  for(var i=0;i<list.length;i++){
+    var v;
+      if(list[i].type=='number'){
+        v=new NumberVariable(this);
+        v.setMinimum(list[i].min);
+        v.setMaximum(list[i].max);
+        if(list[i].step){
+          v.field.setAttribute('step',list[i].step);
+        }
+        console.log("min",list[i].min);
+      }else if(list[i].type=='select'){
+        v=new OptionVariable(this,list[i].options);
+      }else if(list[i].type=='checkbox'){
+        v=new CheckboxVariable(this);
+        if(list[i].defaultValue==true){
+          v.checkboxElement.setAttribute('checked',true);
+        }
+      }
+      v.setLabel(list[i].label);
+      if(list[i].defaultValue) v.setDefaultValue(list[i].defaultValue);
+      if(list[i].description) v.setDescription(list[i].description);
+  }
+
   if(query){
     var test=document.querySelector(query);
     if(test){
@@ -49,7 +74,7 @@ function Generator(query){
 };
 
 Generator.all=[];
-
+/*
 Generator.prototype.autosaveVariables=function(){
   this.autosaveVars=true;
 };
@@ -57,7 +82,7 @@ Generator.prototype.autosaveVariables=function(){
 Generator.prototype.autorun=function(){
   this._autorun=true;
   this.interface.classList.add('autorun');
-};
+};*/
 
 Generator.prototype.load=function(){
   if(typeof this.target==="string"){
@@ -75,8 +100,8 @@ Generator.prototype.load=function(){
       }
     }
   }
-  if(this._autorun){
-
+  if(this.autorun){
+      this.run();
   }
 };
 
@@ -107,7 +132,7 @@ function generators_valueChanged(){
   generators_valueChanged_timer=0;
   Generator.all.forEach(function(g){
     if(g.autosaveVars) g.saveVariables();
-    if(g._autorun) g.run();
+    if(g.autorun) g.run();
   });
 
 }
@@ -320,3 +345,21 @@ Generator.prototype.addOptionVariable=function(label,options){
   v.setLabel(label);
   return v;
 };
+
+
+function CheckboxVariable(gen){
+  Variable.call(this,gen);
+  this.checkboxElement=document.createElement('input');
+  this.checkboxElement.setAttribute('type',"checkbox");
+  this.checkboxElement.setAttribute('data-variable',this.index);
+  this.checkboxElement.addEventListener('change',function(){
+    var v=Variable.all[parseInt(this.getAttribute('data-variable'))];
+    v.setValue(this.value);
+    Generator.valueChanged();
+  },false);
+
+  this.element.appendChild(this.checkboxElement);
+  this.setLabelTarget(this.checkboxElement);
+
+}
+Variable.register(CheckboxVariable);
