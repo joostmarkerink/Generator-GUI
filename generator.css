@@ -13,9 +13,13 @@
 
   display:grid;
   grid-template-columns: minmax(max-content, 100px) 100px 1fr;
-
+  position:relative;
 }
 .generator label{
+}
+.generator textarea{
+  grid-column:1/4;
+  resize:none;
 }
 .generator select,
 .generator input{
@@ -93,6 +97,9 @@
   .generator .variable{
     grid-column:2;
   }
+  .generator textarea{
+    grid-column:1/3;
+  }
 }
 @media (min-width: 1160px){
   .generator{
@@ -116,4 +123,8 @@
    .generator label:nth-child(even){
     padding-left:20px;
   }
+  .generator textarea{
+    grid-column:1/7;
+  }
+
 }
