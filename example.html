@@ -37,7 +37,12 @@ body{
   });
 
   gen.process=function(width,height,select,select2,check){
-    return width+","+height+","+(width*height)+","+["aap","noot","mies"][select]+","+check;
+    var result= "you entered width "+width+", height "+height+".\nAnd choose for "+["aap","noot","mies"][select]+" and "+["aap","noot","mies"][select2];
+    if(check)
+    result+=" and enabled the checkbox";
+    else
+    result+=" and disabled the checkbox";
+    return result;
   };
 
   </script>
