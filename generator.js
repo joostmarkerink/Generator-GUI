@@ -92,11 +92,9 @@ Generator.prototype.load=function(){
       var vars=window.localStorage.variables;
       if(vars){
         vars=vars.split('[@]');
-        if(vars.length==this.variables.length){
-          for(var i=0;i<this.variables.length;i++){
+        if(vars.length==this.variables.length)
+          for(var i=0;i<this.variables.length;i++)
             this.variables[i].loadValueFromString(vars[i]);
-          }
-        }
       }
     }
   }
@@ -110,6 +108,9 @@ Generator.prototype.begin=function(){
     this.target.appendChild(this.interface);
 };
 Generator.prototype.process=function(){};
+Generator.isURL=function(str){
+  return str.indexOf('http://')==0 || str.indexOf('https://')==0 || str.indexOf('ftp://')==0;
+};
 Generator.prototype.run=function(){
   var result=null;
   switch (this.variables.length) {
@@ -123,6 +124,21 @@ Generator.prototype.run=function(){
     case 7:result=this.process(this.variables[0].getValue(),this.variables[1].getValue(),this.variables[2].getValue(),this.variables[3].getValue(),this.variables[4].getValue(),this.variables[5].getValue(),this.variables[6].getValue());break;
     case 8:result=this.process(this.variables[0].getValue(),this.variables[1].getValue(),this.variables[2].getValue(),this.variables[3].getValue(),this.variables[4].getValue(),this.variables[5].getValue(),this.variables[6].getValue(),this.variables[7].getValue());break;
     default:break;
+  }
+  if(typeof result==="string"){
+    if(Generator.isURL(result)){
+
+    }else{
+      if(!this.resultText){
+        this.resultText=document.createElement('textarea');
+        this.resultText.setAttribute('readonly',true);
+        this.interface.appendChild(this.resultText);
+
+      }
+    //  var txt=document.createElement('textarea');
+      this.resultText.value=result;
+      //his.interface.appendChild(txt);
+    }
   }
   console.log(result);
 };
@@ -226,7 +242,6 @@ Variable.prototype.getValue=function(){
   else return this._value;
 };
 Variable.prototype.setValue=function(val){
-  //console.log('setValue',val,this.constructor);
   if(this.isValidValue(val)) this._value=val;
 };
 Variable.prototype.getLabel=function(){
@@ -255,6 +270,14 @@ Variable.register=function(func){
 Variable.prototype.load=function(){
 
 };
+
+
+
+
+
+
+
+
 
 function NumberVariable(gen){
   Variable.call(this,gen);
@@ -294,14 +317,11 @@ NumberVariable.prototype.setValue=function(val){
 NumberVariable.prototype.getValue=function(){
   return this.field.value;
 };
-Generator.prototype.addNumberVariable=function(label,min,max,defaultValue){
-  var v=new NumberVariable(this);
-  v.setLabel(label);
-  v.setMinimum(min);
-  v.setMaximum(max);
-  v.setDefaultValue(defaultValue);
-  return v;
-};
+
+
+
+
+
 
 
 function OptionVariable(gen,options){
@@ -331,6 +351,7 @@ Variable.register(OptionVariable);
 
 OptionVariable.prototype.loadValueFromString=function(str){
   this.setValue(parseInt(str));
+  console.log('load',str);
 };
 OptionVariable.prototype.setValue=function(val){
   this.selectElement.value=val;
@@ -340,11 +361,11 @@ OptionVariable.prototype.getValue=function(){
 };
 
 
-Generator.prototype.addOptionVariable=function(label,options){
-  var v=new OptionVariable(this,options);
-  v.setLabel(label);
-  return v;
-};
+
+
+
+
+
 
 
 function CheckboxVariable(gen){
@@ -354,7 +375,7 @@ function CheckboxVariable(gen){
   this.checkboxElement.setAttribute('data-variable',this.index);
   this.checkboxElement.addEventListener('change',function(){
     var v=Variable.all[parseInt(this.getAttribute('data-variable'))];
-    v.setValue(this.value);
+    v.setValue(this.checked);
     Generator.valueChanged();
   },false);
 
@@ -363,3 +384,14 @@ function CheckboxVariable(gen){
 
 }
 Variable.register(CheckboxVariable);
+
+CheckboxVariable.prototype.setValue=function(val){console.log('val',val);
+this.checkboxElement.checked=val;
+this.checkboxElement.value=val;
+};
+CheckboxVariable.prototype.getValue=function(){
+  return this.checkboxElement.checked;
+};
+CheckboxVariable.prototype.loadValueFromString=function(str){
+  this.setValue(str=="true");
+};
